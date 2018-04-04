@@ -341,6 +341,12 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
+angularx-qrcode@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/angularx-qrcode/-/angularx-qrcode-1.1.0.tgz#52391b024050e95ecdcd6ab826d0179e8d09d5ae"
+  dependencies:
+    qrcodejs2 "0.0.2"
+
 ansi-escapes@^1.0.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"
@@ -7394,6 +7400,10 @@ q@^1.1.2, q@^1.4.1:
 qjobs@^1.1.4:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/qjobs/-/qjobs-1.2.0.tgz#c45e9c61800bd087ef88d7e256423bdd49e5d071"
+
+qrcodejs2@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/qrcodejs2/-/qrcodejs2-0.0.2.tgz#465afe5e39f19facecb932c11f7a186109146ae1"
 
 qs@6.5.1, qs@~6.5.1:
   version "6.5.1"
