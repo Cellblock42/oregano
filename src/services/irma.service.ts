@@ -77,32 +77,29 @@ export class IRMAService {
   // var fallbackTimer;
   // var timeoutTimer;
   constructor(private http: HttpClient, private websocket: WebSocketService) {
-    console.log(this.state);
-    console.log(this.http);
+    // const sigrequest = {
+    //   data: 'foobar',
+    //   validity: 60,
+    //   timeout: 60,
+    //   request: {
+    //     messageType: 'STRING',
+    //     message: 'Just testing',
+    //     content: [
+    //       {
+    //         label: 'over12',
+    //         attributes: ['irma-demo.MijnOverheid.ageLower.over12']
+    //       },
+    //       {
+    //         label: 'name',
+    //         attributes: ['irma-demo.MijnOverheid.fullName.firstname']
+    //       }
+    //     ]
+    //   }
+    // };
 
-    const sigrequest = {
-      data: 'foobar',
-      validity: 60,
-      timeout: 60,
-      request: {
-        messageType: 'STRING',
-        message: 'Just testing',
-        content: [
-          {
-            label: 'over12',
-            attributes: ['irma-demo.MijnOverheid.ageLower.over12']
-          },
-          {
-            label: 'name',
-            attributes: ['irma-demo.MijnOverheid.fullName.firstname']
-          }
-        ]
-      }
-    };
+    // const apiServer = 'https://demo.irmacard.org/tomcat/irma_api_server/api/v2/';
 
-    const apiServer = 'https://demo.irmacard.org/tomcat/irma_api_server/api/v2/';
-
-    this.sign(apiServer, sigrequest);
+    // this.sign(apiServer, sigrequest);
   }
 
   sign(apiServer: string, signatureRequest: any) {

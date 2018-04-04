@@ -14,7 +14,7 @@ export class Web3Service {
 
 	public web3: any;
 
-  constructor() { 
+  constructor() {
   	this.checkAndInstantiateWeb3();
   }
 

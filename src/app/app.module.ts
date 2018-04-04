@@ -2,9 +2,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { QRCodeModule } from 'angularx-qrcode';
+
 import { AppComponent } from './app.component';
 
-import {MetaCoinService, Web3Service, IRMAService, WebSocketService} from '../services/services'
+import { MetaCoinService, Web3Service, IRMAService, WebSocketService } from '../services/services';
+import { AppRoutingModule } from './app-routing.module'
 
 const SERVICES = [
   MetaCoinService,
@@ -17,7 +20,9 @@ const SERVICES = [
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule,
+      HttpClientModule,
+      QRCodeModule,
+      AppRoutingModule,
   ],
   declarations: [
     AppComponent
