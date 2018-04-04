@@ -1,6 +1,6 @@
 import { Component, HostListener, NgZone } from '@angular/core';
 
-import {Web3Service, MetaCoinService} from '../services/services'
+import {Web3Service, MetaCoinService, IRMAService} from '../services/services'
 
 import { canBeNumber } from '../util/validation';
 
@@ -26,11 +26,14 @@ export class AppComponent {
     private _ngZone: NgZone,
     private web3Service: Web3Service,
     private metaCoinService: MetaCoinService,
+    private irmaService: IRMAService,
     ) {
     this.onReady();
   }
 
   onReady = () => {
+    console.log("testing")
+    console.log(this.irmaService)
 
     // Get the initial account balance so it can be displayed.
     this.web3Service.getAccounts().subscribe(accs => {
