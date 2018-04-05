@@ -1,21 +1,31 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
+import { QRCodeModule } from 'angularx-qrcode';
+
+import { IdentityModule } from './identity/identity.module';
+
 import { AppComponent } from './app.component';
 
-import {MetaCoinService, Web3Service} from '../services/services'
+import { MetaCoinService, Web3Service, IRMAService, WebSocketService } from '../services/services';
+import { AppRoutingModule } from './app-routing.module'
 
 const SERVICES = [
   MetaCoinService,
   Web3Service,
+  IRMAService,
+  WebSocketService,
 ]
 
 @NgModule({
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpClientModule,
+    QRCodeModule,
+    AppRoutingModule,
+    IdentityModule,
   ],
   declarations: [
     AppComponent

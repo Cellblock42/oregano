@@ -1,0 +1,16 @@
+<p>
+  Step 2: see QR depending on this value: {{qrValue}}
+</p>
+
+<!-- generate the qr here -->
+<div>
+  <p class="pre-line">
+    {{pollResult}}
+  </p>
+
+  <img [src]="qrImageURL" />
+</div>
+
+<p *ngIf="irma.isLoading">
+  Lol wait again.
+</p>
