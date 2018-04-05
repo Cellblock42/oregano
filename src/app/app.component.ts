@@ -18,6 +18,8 @@ export class AppComponent {
   account: any;
   accounts: any;
 
+  title = 'Oregano 🌿';
+
   balance: number;
   sendingAmount: number;
   recipientAddress: string;
@@ -34,9 +36,8 @@ export class AppComponent {
   }
 
   onReady = () => {
-    console.log('testing')
-    console.log(this.irmaService)
-
+    console.log("App ready")
+    console.log(this.title)
     // Get the initial account balance so it can be displayed.
     this.web3Service.getAccounts().subscribe(accs => {
       this.accounts = accs;
