@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { QRCodeModule } from 'angularx-qrcode';
 
+import { IdentityModule } from './identity/identity.module';
+
 import { AppComponent } from './app.component';
 
 import { MetaCoinService, Web3Service, IRMAService, WebSocketService } from '../services/services';
@@ -20,9 +22,10 @@ const SERVICES = [
   imports: [
     BrowserModule,
     FormsModule,
-      HttpClientModule,
-      QRCodeModule,
-      AppRoutingModule,
+    HttpClientModule,
+    QRCodeModule,
+    AppRoutingModule,
+    IdentityModule,
   ],
   declarations: [
     AppComponent

@@ -1,0 +1,12 @@
+<p>
+  Step 1: fill out form
+</p>
+
+<form (submit)="submitForm()" *ngIf="!irma.isInitialized">
+  <input name="product-code" [(ngModel)]="packageCode"/>
+  <button type="submit">Submit</button>
+</form>
+
+<p *ngIf="irma.isInitialized">
+  Loading...
+</p>

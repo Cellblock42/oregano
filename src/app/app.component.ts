@@ -1,6 +1,8 @@
 import { Component, HostListener, NgZone } from '@angular/core';
 
-import {Web3Service, MetaCoinService, IRMAService} from '../services/services'
+import { Web3Service, MetaCoinService, IRMAService } from '../services/services'
+
+import { IdentityModule } from './identity/identity.module';
 
 import { canBeNumber } from '../util/validation';
 
@@ -32,7 +34,7 @@ export class AppComponent {
   }
 
   onReady = () => {
-    console.log("testing")
+    console.log('testing')
     console.log(this.irmaService)
 
     // Get the initial account balance so it can be displayed.
@@ -63,7 +65,7 @@ export class AppComponent {
     this.setStatus('Initiating transaction... (please wait)');
 
     this.metaCoinService.sendCoin(this.account, this.recipientAddress, this.sendingAmount)
-      .subscribe(() =>{
+      .subscribe(() => {
         this.setStatus('Transaction complete!');
         this.refreshBalance();
       }, e => this.setStatus('Error sending coin; see log.'))

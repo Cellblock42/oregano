@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WebSocketService } from './websocket.service';
-// import * as IRMA from './irma';
+import { Observable } from 'rxjs/Observable';
 
 function base64url(src) {
   let res = btoa(src);
@@ -41,6 +41,24 @@ enum State {
   Done = 'Done'
 }
 
+export enum IRMAPollResult {
+  Initialized = 'INITIALIZED',
+  Done = 'DONE',
+  Connected = 'CONNECTED',
+}
+
+interface IIRMASession {
+  u: string;
+  v: string;
+  vmax: string;
+  irmaqr: string;
+}
+
+export class IRMASession implements IIRMASession  {
+  constructor(public u: string, public v: string, public vmax: string, public irmaqr: string) {
+  }
+}
+
 @Injectable()
 export class IRMAService {
   private state: State = State.Done;
@@ -48,61 +66,14 @@ export class IRMAService {
   private sessionPackage: any = {};
   private sessionCounter = 0;
   private sessionTimedOut = false;
-  // var state = State.Done;
 
-  // // Extra state, this flag is set when we timeout locally but the
-  // // status socket is still active. After this flag is set, we assume
-  // // that errors while polling (if the status socket dies) are due to
-  // // a timeout.
-  // var sessionTimedOut = false;
+  private currentSession: IRMASession;
 
-  // var ua;
+  public isInitialized = false;
 
-  // var webServer = '';
+  constructor(private http: HttpClient, private websocket: WebSocketService) {}
 
-  // var sessionPackage;
-  // var sessionCounter = 0;
-
-  // var successCallback;
-  // var cancelCallback;
-  // var failureCallback;
-
-  // var sessionId;
-  // var apiServer;
-  // var action;
-  // var actionPath;
-
-  // var statusWebsocket;
-
-  // var fallbackTimer;
-  // var timeoutTimer;
-  constructor(private http: HttpClient, private websocket: WebSocketService) {
-    // const sigrequest = {
-    //   data: 'foobar',
-    //   validity: 60,
-    //   timeout: 60,
-    //   request: {
-    //     messageType: 'STRING',
-    //     message: 'Just testing',
-    //     content: [
-    //       {
-    //         label: 'over12',
-    //         attributes: ['irma-demo.MijnOverheid.ageLower.over12']
-    //       },
-    //       {
-    //         label: 'name',
-    //         attributes: ['irma-demo.MijnOverheid.fullName.firstname']
-    //       }
-    //     ]
-    //   }
-    // };
-
-    // const apiServer = 'https://demo.irmacard.org/tomcat/irma_api_server/api/v2/';
-
-    // this.sign(apiServer, sigrequest);
-  }
-
-  sign(apiServer: string, signatureRequest: any) {
+  startSignSession(apiServer: string, signatureRequest: any): Observable<IRMASession> {
     const actionUrl = this.actionPath(apiServer, Action.Signing);
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'text/plain' })
@@ -110,9 +81,36 @@ export class IRMAService {
 
     const jwt = this.createUnsignedSignatureJWT(signatureRequest);
 
-    this.http
-      .post(actionUrl, jwt, httpOptions)
-      .subscribe(data => console.log(data), error => console.error(error));
+    return this.http
+      .post<IIRMASession>(actionUrl, jwt, httpOptions)
+      .map(session => {
+        this.currentSession = new IRMASession(actionUrl + session.u,
+                                              session.v,
+                                              session.vmax,
+                                              session.irmaqr);
+        this.isInitialized = true;
+        return this.currentSession;
+      });
+  }
+
+  fetchSessionStatus(session: IRMASession): Observable<IRMAPollResult> {
+    return this.http.get<IRMAPollResult>(session.u + '/status?' + Math.random())
+  }
+
+  pollSessionStatus(session: IRMASession): Observable<IRMAPollResult> {
+    return Observable.interval(500).flatMap(_ =>  this.fetchSessionStatus(session))
+  }
+
+  getCurrentSession(): IRMASession {
+    return this.currentSession;
+  }
+
+  getQRImageURL(session: IRMASession): string {
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=230x230&data=' + JSON.stringify(session);
+  }
+
+  getSignatureProof(session: IRMASession): Observable<string> {
+    return this.http.get(session.u + '/getsignature', { responseType: 'text' })
   }
 
   private actionPath(apiServer: string, action: Action): string {
@@ -120,23 +118,24 @@ export class IRMAService {
       case Action.Signing:
         return apiServer + 'signature/';
     }
+    console.error('Can\'t handle this session type yet')
     throw new Error('Not implemented');
   }
 
-  private clearState() {
-    if (
-      this.state !== State.Cancelled &&
-      this.state !== State.Timeout &&
-      this.state !== State.Done
-    ) {
-      console.log('Found previously active session, cancelling that one first');
-      // cancelSession(true);
-    }
-    this.state = State.Initialized;
-    this.sessionCounter++;
-    this.sessionPackage = {};
-    this.sessionTimedOut = false;
-  }
+  // private clearState() {
+  //   if (
+  //     this.state !== State.Cancelled &&
+  //     this.state !== State.Timeout &&
+  //     this.state !== State.Done
+  //   ) {
+  //     console.log('Found previously active session, cancelling that one first');
+  //     // cancelSession(true);
+  //   }
+  //   this.state = State.Initialized;
+  //   this.sessionCounter++;
+  //   this.sessionPackage = {};
+  //   this.sessionTimedOut = false;
+  // }
 
   private createUnsignedSignatureJWT(absrequest) {
     return this.createJWT(absrequest, 'absrequest', 'signature_request', 'testsigclient');
