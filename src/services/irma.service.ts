@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WebSocketService } from './websocket.service';
 import { Observable } from 'rxjs/Observable';
 
-function base64url(src) {
+function base64url(src: string): string {
   let res = btoa(src);
 
   // Remove padding characters
@@ -14,6 +14,29 @@ function base64url(src) {
   res = res.replace(/\//g, '_');
 
   return res;
+}
+
+function debase64url(src: string): string {
+  let output = src.replace(/-/g, '+').replace(/_/g, '/');
+
+  switch (output.length % 4) {
+    case 0:
+      break;
+    case 2:
+      output += '==';
+      break;
+    case 3:
+      output += '=';
+      break;
+    default:
+      throw new Error('Illegal base64url string!');
+  }
+
+  return atob(output);
+}
+
+function jwtDecode(token: string) {
+  return debase64url(token.split('.')[1]);
 }
 
 const STATUS_CHECK_INTERVAL = 500;
@@ -109,8 +132,14 @@ export class IRMAService {
     return 'https://api.qrserver.com/v1/create-qr-code/?size=230x230&data=' + JSON.stringify(session);
   }
 
-  getSignatureProof(session: IRMASession): Observable<string> {
+  getSignatureProof(session: IRMASession): Observable<any> {
     return this.http.get(session.u + '/getsignature', { responseType: 'text' })
+              .map(token => {
+                const decoded = jwtDecode(token);
+                const stringified = decoded.replace(/:(\d+)([,}])/g, ':"$1"$2');
+
+                return JSON.parse(stringified)['signature'];
+              })
   }
 
   private actionPath(apiServer: string, action: Action): string {

@@ -24,9 +24,8 @@ export class FinishComponent implements OnInit {
 
     if (!this.session) {
       this.router.navigate(['..', 'init'], { relativeTo: this.route });
+    } else {
+      this.irma.getSignatureProof(this.session).subscribe(proof => { this.proof = proof; console.log(proof) })
     }
-
-    this.irma.getSignatureProof(this.session).subscribe(proof => { this.proof = proof; console.log(proof) })
   }
-
 }

@@ -25,10 +25,10 @@ export class PollComponent implements OnInit {
 
     if (!this.session) {
       this.router.navigate(['..', 'init'], { relativeTo: this.route });
+    } else {
+      this.qrImageURL = this.irma.getQRImageURL(this.session);
+      this.poll();
     }
-
-    this.qrImageURL = this.irma.getQRImageURL(this.session);
-    this.poll();
   }
 
   private poll() {
