@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { PollComponent } from './poll.component';
 
@@ -8,7 +9,11 @@ describe('PollComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PollComponent ]
+      declarations: [ PollComponent ],
+      providers: [
+        { provide: Router, useClass: class { navigate = jasmine.createSpy("navigate") } },
+        ActivatedRoute
+      ],
     })
     .compileComponents();
   }));

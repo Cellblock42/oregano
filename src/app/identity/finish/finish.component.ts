@@ -1,31 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
+import { Router, ActivatedRoute } from '@angular/router'
 
-import { IRMAService, IRMASession } from '../../../services/irma.service';
+import { IRMAService, IRMASession } from '../../../services/irma.service'
 
 @Component({
-  selector: 'app-finish',
+  selector: 'app-identity-finish',
   templateUrl: './finish.component.html',
-  styleUrls: ['./finish.component.css']
+  styleUrls: ['./finish.component.css'],
 })
 export class FinishComponent implements OnInit {
 
-  private session: IRMASession;
-  private proof: string;
+  @Input() session: IRMASession
+  @Output() finish = new EventEmitter<any>()
+
+  private proof: string
 
   constructor(
-    public router: Router,
-    public route: ActivatedRoute,
     public irma: IRMAService
   ) { }
 
   ngOnInit() {
-    this.session = this.irma.getCurrentSession();
-
-    if (!this.session) {
-      this.router.navigate(['..', 'init'], { relativeTo: this.route });
-    } else {
-      this.irma.getSignatureProof(this.session).subscribe(proof => { this.proof = proof; console.log(proof) })
-    }
+    const subscription = this.irma.getSignatureProof(this.session)
+      .subscribe(proof => {
+        this.proof = proof
+        console.log(proof)
+        this.finish.emit(proof)
+        this.finish.complete()
+      })
   }
 }

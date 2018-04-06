@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { IRMAService, IRMASession, IRMAPollResult } from '../../../services/irma.service';
-import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-identity-poll',
@@ -9,38 +7,32 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./poll.component.css']
 })
 export class PollComponent implements OnInit {
-
-  private session: IRMASession;
   private qrImageURL: string;
   private pollResult: IRMAPollResult
 
+  @Input() session: IRMASession;
+  @Output() poll = new EventEmitter<IRMAPollResult>();
+
   constructor(
-    public router: Router,
-    public route: ActivatedRoute,
-    public irma: IRMAService
+    private irma: IRMAService
   ) { }
 
   ngOnInit() {
-    this.session = this.irma.getCurrentSession();
-
-    if (!this.session) {
-      this.router.navigate(['..', 'init'], { relativeTo: this.route });
-    } else {
-      this.qrImageURL = this.irma.getQRImageURL(this.session);
-      this.poll();
-    }
+    this.qrImageURL = this.irma.getQRImageURL(this.session);
+    this.startPolling();
   }
 
-  private poll() {
+  private startPolling() {
     const subscription = this.irma.pollSessionStatus(this.session)
       .subscribe(result => {
         this.pollResult = result;
 
+        this.poll.emit(this.pollResult)
+
         if (this.pollResult === IRMAPollResult.Done) {
-          subscription.unsubscribe();
-          this.router.navigate(['..', 'finish'], { relativeTo: this.route });
+          subscription.unsubscribe()
+          this.poll.complete()
         }
       });
   }
-
 }

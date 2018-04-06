@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { IRMAService, IRMASession } from '../../../services/irma.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -11,7 +11,10 @@ export class InitComponent implements OnInit {
 
   public packageCode: string;
 
-  private currentSession: IRMASession;
+  // private currentSession: IRMASession;
+
+  @Input() attributes: string[];
+  @Output() init = new EventEmitter<IRMASession>();
 
   constructor(
     public router: Router,
@@ -20,6 +23,7 @@ export class InitComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log('initialized InitComponent')
   }
 
   submitForm() {
@@ -30,34 +34,31 @@ export class InitComponent implements OnInit {
        request: {
          messageType: 'STRING',
          message: this.packageCode,
-         content: [
-           {
-             label: 'over18',
-             attributes: ['irma-demo.MijnOverheid.ageLower.over18']
-           },
-           {
-             label: 'city',
-             attributes: ['irma-demo.MijnOverheid.address.city']
-           }
-         ]
+         content: []
        }
      };
 
-     const apiServer = 'https://demo.irmacard.org/tomcat/irma_api_server/api/v2/';
+     const attributes = this.attributes || [
+      'irma-demo.MijnOverheid.ageLower.over18',
+      'irma-demo.MijnOverheid.address.city'
+     ]
 
-     this.irma.startSignSession(apiServer, signRequest)
-         .subscribe(session => {
-          //  this.pollSessionResult(session).subscribe(res => {
-          //   console.log(res)
-          //  })
-          console.log(session)
-          this.router.navigate(['..', 'poll'], { relativeTo: this.route });
-         })
-    // this.magic.submitForm(this.inputValue)
-    // .subscribe((resultingJson)=>{
-    //   // success, navigate
-    //   this.router.navigate(['..','step2'],{relativeTo:this.route});
-    // })
+     signRequest.request.content = attributes.map(attr => {
+       const parts = attr.split('.')
+       const label = parts[parts.length - 1]
+       return {
+         label: label,
+         attributes: [attr]
+       }
+      })
+
+     const apiServer = 'https://demo.irmacard.org/tomcat/irma_api_server/api/v2/'
+
+     const subscription = this.irma.startSignSession(apiServer, signRequest)
+                            .subscribe(session => {
+                              subscription.unsubscribe()
+                              this.init.emit(session)
+                              this.init.complete()
+                            })
   }
-
 }

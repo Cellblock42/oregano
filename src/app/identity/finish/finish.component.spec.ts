@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FinishComponent } from './finish.component';
+import { Router, ActivatedRoute } from '@angular/router';
+import { IRMAService } from '../../../services/irma.service';
+import { HttpClientModule } from '@angular/common/http';
+
+
 
 describe('FinishComponent', () => {
   let component: FinishComponent;
@@ -8,7 +13,9 @@ describe('FinishComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FinishComponent ]
+      declarations: [ FinishComponent ],
+      providers: [ Router, ActivatedRoute, IRMAService ],
+      imports: [ HttpClientModule ],
     })
     .compileComponents();
   }));

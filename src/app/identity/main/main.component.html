@@ -1,5 +1,17 @@
 <h2>
-  Magic Main Component
+  Authorize yourself with IRMA
 </h2>
 
-<router-outlet></router-outlet>
+<app-identity-init
+  [attributes]="requiredAttributes"
+  (init)="onInit($event)" *ngIf="isInit()" ></app-identity-init>
+
+<app-identity-poll
+  [session]="currentSession"
+  (poll)="onPoll($event)"
+  *ngIf="isPoll()" ></app-identity-poll>
+
+<app-identity-finish
+  [session]="currentSession"
+  (finish)="onFinish($event)"
+  *ngIf="isFinished()" ></app-identity-finish>

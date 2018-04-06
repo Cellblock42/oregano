@@ -1,6 +1,6 @@
 import { Component, HostListener, NgZone } from '@angular/core';
 
-import { Web3Service, MetaCoinService, IRMAService } from '../services/services'
+import { Web3Service, MetaCoinService, IRMAService, OreganoService } from '../services/services'
 
 import { IdentityModule } from './identity/identity.module';
 
@@ -31,12 +31,13 @@ export class AppComponent {
     private web3Service: Web3Service,
     private metaCoinService: MetaCoinService,
     private irmaService: IRMAService,
+    private oreganoService: OreganoService,
     ) {
     this.onReady();
   }
 
   onReady = () => {
-    console.log("App ready")
+    console.log('App ready')
     console.log(this.title)
     // Get the initial account balance so it can be displayed.
     this.web3Service.getAccounts().subscribe(accs => {
@@ -49,6 +50,13 @@ export class AppComponent {
         this.refreshBalance()
       );
     }, err => alert(err))
+
+    this.oreganoService.getNumProducers().subscribe(num => {
+      console.log('numproducers')
+      console.log(num)
+    })
+
+    this.oreganoService.getProducers().subscribe(p => console.log(p))
   };
 
   refreshBalance = () => {

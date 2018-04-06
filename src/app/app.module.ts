@@ -8,7 +8,7 @@ import { IdentityModule } from './identity/identity.module';
 
 import { AppComponent } from './app.component';
 
-import { MetaCoinService, Web3Service, IRMAService, WebSocketService } from '../services/services';
+import { MetaCoinService, Web3Service, IRMAService, WebSocketService, OreganoService } from '../services/services';
 import { AppRoutingModule } from './app-routing.module'
 
 const SERVICES = [
@@ -16,6 +16,7 @@ const SERVICES = [
   Web3Service,
   IRMAService,
   WebSocketService,
+  OreganoService,
 ]
 
 @NgModule({

@@ -8,7 +8,7 @@ import { FinishComponent } from './identity/finish/finish.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/identity/init',
+    redirectTo: '/identity',
     pathMatch: 'full'
   },
   {

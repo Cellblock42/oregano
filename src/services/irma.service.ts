@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { WebSocketService } from './websocket.service';
 import { Observable } from 'rxjs/Observable';
 
 function base64url(src: string): string {
@@ -94,7 +93,7 @@ export class IRMAService {
 
   public isInitialized = false;
 
-  constructor(private http: HttpClient, private websocket: WebSocketService) {}
+  constructor(private http: HttpClient) {}
 
   startSignSession(apiServer: string, signatureRequest: any): Observable<IRMASession> {
     const actionUrl = this.actionPath(apiServer, Action.Signing);
